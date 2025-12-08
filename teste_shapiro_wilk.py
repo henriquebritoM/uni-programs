@@ -21,10 +21,10 @@ valo_w2, valor_p2 = shapiro(lab2)
 valo_w3, valor_p3 = shapiro(lab3)
 valo_w4, valor_p4 = shapiro(lab4)
 
-#   Um p-value acima de 0.5 indica que a população da amostra segue uma distribuição normal
-normal1 = valor_p1 > 0.5
-normal2 = valor_p2 > 0.5
-normal3 = valor_p3 > 0.5
-normal4 = valor_p4 > 0.5
+#   Um p-value acima de 0.05 indica que a população da amostra segue uma distribuição normal
+normal1 = valor_p1 > 0.05
+normal2 = valor_p2 > 0.05
+normal3 = valor_p3 > 0.05
+normal4 = valor_p4 > 0.05
 
 print("As amostras seguem a distribuição normal? ", normal1 & normal2 & normal3 & normal4)
