@@ -76,38 +76,70 @@ impl<T: PartialEq> LinkedList<T> {
 
     pub fn remove(&mut self, value: T) {
         if self.len == 0 {return;}
+        
+        unsafe {
+            let mut past_node: Option<NonNull<Node<T>>> = None;
+            let mut current_node: NonNull<Node<T>> = self.head.unwrap();
+            let mut found = current_node.as_ref().value == value;
 
-        let current_node = unsafe {self.head.unwrap().as_ref()};  //  garantido que existe, visto que len > 0
-        if current_node.value == value {
-            self.head = None;
+            while let Some(next) = current_node.as_ref().next {
+
+                past_node = Some(current_node);
+                current_node = next;
+
+                if next.as_ref().value == value {found = true; break;}
+            }
+
+            if !found {return;}
+
+            if Some(current_node) == self.head {
+                self.head = current_node.as_ref().next;
+            }
+
+            if past_node.is_some() {
+                past_node.unwrap().as_mut().next = current_node.as_ref().next;
+            }
+
             self.len -= 1;
-            drop(Box::new(current_node));   //  desaloca current node
-            return
+            drop(Box::new(current_node));
         }
-
-        let mut past_node = unsafe {self.head.unwrap().as_mut()};
-        let mut current_node = unsafe { 
-            let Some(n) = current_node.next else {return;};
-            n.as_ref()
-        };
-
-        while current_node.value != value {
-            if current_node.next.is_none() {return;}
-
-            past_node = current_node;
-            current_node = unsafe { past_node.next.unwrap().as_ref() };
-        }
-
-        //  nesse ponto o valor está no current_node 
-        if let Some(next_node) = current_node.next {
-            past_node.next = Some(next_node);
-        } 
-        else {
-            past_node.next = None;
-        }
-        self.len -= 1;
-        drop(Box::new(current_node));   //  desaloca current node
     }
+
+
+    // pub fn _remove(&mut self, value: T) {
+    //     if self.len == 0 {return;}
+
+    //     let current_node = unsafe {self.head.unwrap().as_ref()};  //  garantido que existe, visto que len > 0
+    //     if current_node.value == value {
+    //         self.head = None;
+    //         self.len -= 1;
+    //         drop(Box::new(current_node));   //  desaloca current node
+    //         return
+    //     }
+
+    //     let mut past_node = unsafe {self.head.unwrap().as_mut()};
+    //     let mut current_node = unsafe { 
+    //         let Some(n) = current_node.next else {return;};
+    //         n.as_ref()
+    //     };
+
+    //     while current_node.value != value {
+    //         if current_node.next.is_none() {return;}
+
+    //         past_node = current_node;
+    //         current_node = unsafe { past_node.next.unwrap().as_ref() };
+    //     }
+
+    //     //  nesse ponto o valor está no current_node 
+    //     if let Some(next_node) = current_node.next {
+    //         past_node.next = Some(next_node);
+    //     } 
+    //     else {
+    //         past_node.next = None;
+    //     }
+    //     self.len -= 1;
+    //     drop(Box::new(current_node));   //  desaloca current node
+    // }
 
 
     pub fn list(&self) -> Vec<&T> {

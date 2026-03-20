@@ -20,10 +20,10 @@ use std::{cmp, fmt::Display, ptr::NonNull};
  *  pois o compilador utiliza o ponteiro null como Option(None)
 */
 pub struct Node<T: PartialOrd> {
-    pub(crate) value: T,
-    pub(crate) parent: Option<NonNull<Node<T>>>,
-    pub(crate) left: Option<NonNull<Node<T>>>,
-    pub(crate) right: Option<NonNull<Node<T>>>,
+    value: T,
+    parent: Option<NonNull<Node<T>>>,
+    left: Option<NonNull<Node<T>>>,
+    right: Option<NonNull<Node<T>>>,
 }
 
 impl <T: PartialOrd> Node<T> {
@@ -474,7 +474,7 @@ impl<T: Display + PartialOrd> BST<T> {
 
     // Função auxiliar recursiva que faz o trabalho pesado
     // Usa 'prefix' para desenhar a linha vertical da indentação
-    unsafe fn print_recursive(node_ptr: NonNull<Node<T>>, depth: usize, eh_o_ultimo: bool) {
+    fn print_recursive(node_ptr: NonNull<Node<T>>, depth: usize, eh_o_ultimo: bool) { unsafe {
         let node = node_ptr.as_ref();
 
         // 1. Imprimir o nó atual
@@ -505,5 +505,5 @@ impl<T: Display + PartialOrd> BST<T> {
             // O filho direito SEMPRE é o último elemento a ser desenhado naquele nível
             Self::print_recursive(right_ptr, depth + 1, true);
         }
-    }
+    }}
 }
