@@ -19,7 +19,7 @@ int main() {
     char buffer[150] = {'\0'};
     while (1) {
 
-        if (fread(&tam, sizeof(char), 1, fp) == 0) break; 
+        if (fread(&tam, sizeof(char), 1, fp) == 0) break;
 
         fread(buffer, sizeof(char), tam, fp);
 
@@ -34,7 +34,6 @@ int main() {
                 case 0:
                     c.valor = atof(buffer + i + 1);
                     break;
-                
                 case 1:
                     c.qtd = atoi(buffer + i + 1);
                     break;
@@ -47,10 +46,7 @@ int main() {
         }
 
         printf("nome: %s quantidade: %d valor: %.2f\n", c.name, c.qtd, c.valor);
-        
     }
-
-
 
     return 0;
 }
