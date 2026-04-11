@@ -25,6 +25,7 @@ struct indice_secundario fill_indices(char* buffer, long ftell, long* indices) {
 
 	return is;
 }
+
 // Indice secundário -> Indice primário -> Arquivo
 
 int main() {
