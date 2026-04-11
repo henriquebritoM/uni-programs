@@ -7,7 +7,7 @@ pub trait CountingSortable {
 //  Copy: Elementos não contém ponteiros para o Heap (não precisa de deep copy)
 //  Into<usize> Elementos podem ser convertidos para usize 
 impl<T> CountingSortable for &mut [T] 
-where T: Ord + Copy + Into<usize>
+where T: Ord + Copy + TryInto<usize> + TryFrom<usize>
 {
     fn counting_sort(&mut self) {
         
@@ -15,13 +15,17 @@ where T: Ord + Copy + Into<usize>
             return;
         };
 
-        let max: usize = max.into();
+        let Ok(max) = max.try_into() else {
+            panic!("O tipo não pode ser convertido para usize");
+        };
 
         let mut aux_vec: Vec<usize> = vec![0; max + 1];
 
         //  Calcula a quantidade de ocorrencias
         for i in 0..self.len() {
-            let indice = self[i].into();
+            let Ok(indice) = self[i].try_into() else {
+                panic!("O tipo não pode ser convertido para usize");
+            };
             aux_vec[indice] += 1;
         }
 
@@ -34,13 +38,18 @@ where T: Ord + Copy + Into<usize>
         }
 
         //  Inicializa o vetor com o primeiro elemento, para não ficar com lixo
+        //  Alguns type annotations horríveis aqui
         let mut result: Vec<T> = vec![self[0]; self.len()];
         for i in 0..self.len() {
-            let el: T = self[i];
-            let indice = aux_vec[el.into()] - 1;
-            aux_vec[el.into()] -= 1;
 
-            result[indice] = el;
+            let Ok(el) = self[i].try_into() else {
+                panic!("O tipo não pode ser convertido para usize");
+            };
+
+            let indice = aux_vec[el] - 1;
+            aux_vec[el] -= 1;
+
+            result[indice] = self[i];
         }
 
         self.copy_from_slice(&result);

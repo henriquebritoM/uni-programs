@@ -4,6 +4,7 @@ use std::{usize};
 pub trait QuickSortable {
     ///
     fn qsort(&mut self);
+    fn qsort_naive(&mut self);
 }
 
 impl<T> QuickSortable for &mut [T] 
@@ -13,6 +14,13 @@ where T: Ord + Copy
 
         qsort_recursive(self, 0, self.len() - 1);
     }
+    
+    fn qsort_naive(&mut self) {
+        
+        qsort_recursive_naive(self, 0, self.len() - 1);
+    }
+
+
 }
 
 fn qsort_recursive<T> (slice: &mut [T], start: usize, end: usize) 
@@ -40,7 +48,6 @@ where T: Ord + Copy
     let mut i: usize = start; //
 
     for j in start..=end {
-        println!("i: {i}, j: {j}");
         if slice[j] <= pivot {
             slice.swap(i, j); 
             i += 1;                
@@ -64,14 +71,49 @@ where T: Ord + Copy
     let b: T = slice[middle];
     let c: T = slice[end];
 
-    if a > b && b > c {
-        slice.swap(middle, end);
+    if a > b {
+        slice.swap(start, middle);
     }
-    else if c < a && a < b {
+    if a > c {
         slice.swap(start, end);
     }
-    //  Não é preciso testar o caso do C ser a mediana, porque ele já está
-    //  na posição correta (final)
+    if b > c {
+        slice.swap(middle, end);
+    }
+
+    // Agora a mediana está em middle — move para end
+    slice.swap(middle, end);
 }
 
+fn qsort_recursive_naive<T> (slice: &mut [T], start: usize, end: usize) 
+where T: Ord + Copy
+{
+    if start >= end {
+        return;
+    }
 
+    let pi = partition_naive(slice, start, end);
+
+    if pi > 0 {qsort_recursive_naive(slice, start, pi - 1);}
+    qsort_recursive_naive(slice, pi + 1, end);
+}
+
+fn partition_naive<T> (slice: &mut [T], start: usize, end: usize) -> usize
+where T: Ord + Copy
+{   
+    let pivot = slice[end];
+
+    let mut i: usize = start; //
+
+    for j in start..=end {
+        if slice[j] <= pivot {
+            slice.swap(i, j); 
+            i += 1;                
+        }
+    }
+
+    if i > 0 {i -= 1};
+
+    // slice.swap(i + 1, end);
+    return i;
+}
